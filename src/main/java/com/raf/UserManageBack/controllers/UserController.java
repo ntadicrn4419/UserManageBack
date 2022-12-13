@@ -2,6 +2,7 @@ package com.raf.UserManageBack.controllers;
 import com.raf.UserManageBack.dto.UserEmailDto;
 import com.raf.UserManageBack.models.Permission;
 import com.raf.UserManageBack.models.User;
+import com.raf.UserManageBack.responses.AllUsersResponse;
 import com.raf.UserManageBack.services.AuthorisationService;
 import com.raf.UserManageBack.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,21 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(){
+    public ResponseEntity<?> getAllUsers(){
         String email = getContext().getAuthentication().getName();
         if(this.authorisationService.isAuthorised(Permission.CAN_READ_USERS, email)){
             List<User> users = this.userService.getAll();
-            return ResponseEntity.ok(users);
+            return ResponseEntity.ok(new AllUsersResponse(users));
+        }
+        return ResponseEntity.status(403).build();
+    }
+
+    @GetMapping( "/{email}")
+    public ResponseEntity<?> getUserByEmail(@PathVariable("email") String userEmail){
+        String email = getContext().getAuthentication().getName();
+        if(this.authorisationService.isAuthorised(Permission.CAN_READ_USERS, email)){
+            User user = this.userService.findByEmail(userEmail);
+            return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(403).build();
     }
@@ -53,12 +64,12 @@ public class UserController {
         String email = getContext().getAuthentication().getName();
         if(this.authorisationService.isAuthorised(Permission.CAN_UPDATE_USERS, email)){
             this.userService.update(user);
-            return ResponseEntity.status(200).build();
+            return ResponseEntity.ok(user);
         }
         return ResponseEntity.status(403).build();
     }
 
-    @DeleteMapping(value ="/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value ="/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> delete(@Valid @RequestBody UserEmailDto dto) {
         String email = getContext().getAuthentication().getName();
         if(this.authorisationService.isAuthorised(Permission.CAN_DELETE_USERS, email)){

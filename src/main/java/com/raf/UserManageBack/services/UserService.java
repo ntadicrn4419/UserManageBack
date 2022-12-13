@@ -60,4 +60,8 @@ public class UserService  implements UserDetailsService {
         User userToDelete = this.findByEmail(userEmail);
         this.userRepository.delete(userToDelete);
     }
+
+    public User findById(Long id) {
+        return this.userRepository.getById(id);
+    }
 }
