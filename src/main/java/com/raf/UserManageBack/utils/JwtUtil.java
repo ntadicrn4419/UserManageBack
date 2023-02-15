@@ -31,11 +31,12 @@ public class JwtUtil {
                 .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY).compact();
     }
 
     public boolean validateToken(String token, UserDetails user) {
-        return (user.getUsername().equals(extractUsername(token)) && !isTokenExpired(token));
+//        return (user.getUsername().equals(extractUsername(token)) && !isTokenExpired(token));
+        return user.getUsername().equals(extractUsername(token));
     }
 }

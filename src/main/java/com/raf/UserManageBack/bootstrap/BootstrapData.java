@@ -25,7 +25,7 @@ public class BootstrapData implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void run(String... args)  {
 
         System.out.println("Loading Data...");
 
